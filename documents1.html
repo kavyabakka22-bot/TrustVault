@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Documents - TrustVault</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #172554;
+}
+
+header {
+    background: #10234b;
+    color: white;
+    padding: 22px 35px;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+main { padding: 35px; }
+
+.container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+input, select {
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    margin: 5px 0;
+}
+
+input { width: 230px; max-width: 100%; }
+
+button {
+    padding: 10px 15px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 4px;
+}
+
+button:hover { background: #1d4ed8; }
+
+.revoke {
+    background: #dc2626;
+}
+
+.revoke:hover {
+    background: #b91c1c;
+}
+
+table {
+    width: 100%;
+    margin-top: 25px;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+th, td {
+    text-align: left;
+    padding: 14px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th { background: #eff6ff; }
+
+.download {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#message, #shareMessage, #shareListMessage {
+    color: #64748b;
+}
+
+#shareBox {
+    display: none;
+    background: #eff6ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+#shareAccess {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #cbd5e1;
+}
+
+#shareAccess table {
+    min-width: 550px;
+    background: white;
+}
+
+@media(max-width: 600px) {
+    main { padding: 15px; }
+    header { padding: 20px; }
+    .container { padding: 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🔐 TrustVault - My Documents</h2>
+    <a href="/dashboard1.html">← Back to Dashboard</a>
+</header>
+
+<main>
+<div class="container">
+
+    <h2>My Documents</h2>
+    <p>Manage and securely share your personal documents.</p>
+
+    <input
+        type="text"
+        id="search"
+        placeholder="Search documents..."
+        oninput="searchFiles()"
+    >
+
+    <p id="message">Loading your documents...</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Document Name</th>
+                <th>Type</th>
+                <th>File Size</th>
+                <th>Upload Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody id="documentList">
+            <tr><td colspan="5">Loading...</td></tr>
+        </tbody>
+    </table>
+
+    <div id="shareBox">
+
+        <h3>🔐 Share Document</h3>
+
+        <p id="selectedDocument"></p>
+
+        <input
+            type="email"
+            id="recipientEmail"
+            placeholder="Recipient's registered email"
+        >
+
+        <br>
+
+        <label for="permission">Choose permission:</label>
+
+        <select id="permission">
+            <option value="viewer">Viewer</option>
+            <option value="editor">Editor</option>
+        </select>
+
+        <br>
+
+        <button onclick="shareDocument()">Share Document</button>
+        <button onclick="closeShareBox()">Close</button>
+
+        <p id="shareMessage"></p>
+
+        <div id="shareAccess">
+
+            <h3>👥 People With Access</h3>
+
+            <p id="shareListMessage">Loading sharing details...</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Permission</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="shareList">
+                    <tr>
+                        <td colspan="4">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+</main>
+
+<script>
+
+let allDocuments = [];
+let selectedDocumentId = null;
+
+function formatSize(bytes) {
+
+    if (bytes < 1024) return bytes + " Bytes";
+
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(2) + " KB";
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+// Load documents
+async function loadDocuments() {
+
+    const message = document.getElementById("message");
+    const list = document.getElementById("documentList");
+
+    try {
+
+        const response = await fetch("/api/documents");
+
+        if (response.status === 401) {
+            window.location.href = "/login1.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Could not load documents.");
+        }
+
+        allDocuments = data.documents;
+
+        displayDocuments(allDocuments);
+
+        message.innerText =
+            "Total documents: " + allDocuments.length;
+
+    } catch (error) {
+
+        message.innerText = error.message;
+
+        list.innerHTML =
+            '<tr><td colspan="5">Could not load documents.</td></tr>';
+    }
+}
+
+// Display documents
+function displayDocuments(documents) {
+
+    const list = document.getElementById("documentList");
+
+    list.innerHTML = "";
+
+    if (documents.length === 0) {
+
+        list.innerHTML =
+            '<tr><td colspan="5">No documents available.</td></tr>';
+
+        return;
+    }
+
+    documents.forEach(function(doc) {
+
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = doc.original_name;
+
+        const typeCell = document.createElement("td");
+        typeCell.textContent = doc.mime_type;
+
+        const sizeCell = document.createElement("td");
+        sizeCell.textContent = formatSize(doc.file_size);
+
+        const dateCell = document.createElement("td");
+        dateCell.textContent =
+            new Date(doc.uploaded_at + " UTC").toLocaleString();
+
+        const actionCell = document.createElement("td");
+
+        const downloadLink = document.createElement("a");
+
+        downloadLink.href =
+            "/api/documents/" + encodeURIComponent(doc.id) + "/download";
+
+        downloadLink.textContent = "Download";
+        downloadLink.className = "download";
+
+        const shareButton = document.createElement("button");
+
+        shareButton.textContent = "Share / Manage Access";
+
+        shareButton.addEventListener("click", function() {
+            openShareBox(doc.id, doc.original_name);
+        });
+
+        actionCell.appendChild(downloadLink);
+        actionCell.appendChild(document.createElement("br"));
+        actionCell.appendChild(shareButton);
+
+        row.appendChild(nameCell);
+        row.appendChild(typeCell);
+        row.appendChild(sizeCell);
+        row.appendChild(dateCell);
+        row.appendChild(actionCell);
+
+        list.appendChild(row);
+    });
+}
+
+// Search documents
+function searchFiles() {
+
+    const search = document
+        .getElementById("search")
+        .value.toLowerCase();
+
+    const filteredDocuments = allDocuments.filter(function(doc) {
+
+        return doc.original_name.toLowerCase().includes(search) ||
+            doc.mime_type.toLowerCase().includes(search);
+
+    });
+
+    displayDocuments(filteredDocuments);
+}
+
+// Open sharing section
+function openShareBox(documentId, documentName) {
+
+    selectedDocumentId = documentId;
+
+    document.getElementById("selectedDocument").innerText =
+        "Selected document: " + documentName;
+
+    document.getElementById("recipientEmail").value = "";
+    document.getElementById("permission").value = "viewer";
+    document.getElementById("shareMessage").innerText = "";
+
+    document.getElementById("shareBox").style.display = "block";
+
+    loadShares();
+
+    document.getElementById("shareBox").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+// Close sharing section
+function closeShareBox() {
+
+    document.getElementById("shareBox").style.display = "none";
+
+    selectedDocumentId = null;
+}
+
+// Share document
+async function shareDocument() {
+
+    const email = document
+        .getElementById("recipientEmail")
+        .value.trim();
+
+    const permission = document
+        .getElementById("permission")
+        .value;
+
+    const message = document.getElementById("shareMessage");
+
+    if (!selectedDocumentId) {
+        message.innerText = "Please select a document.";
+        return;
+    }
+
+    if (!email) {
+        message.innerText = "Please enter recipient email.";
+        return;
+    }
+
+    message.innerText = "Sharing document...";
+
+    try {
+
+        const response = await fetch(
+            "/api/documents/" + selectedDocumentId + "/share",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email: email,
+                    permission: permission
+                })
+            }
+        );
+
+        if (response.status === 401) {
+            window.location.href = "/login1.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Sharing failed.");
+        }
+
+        message.innerText = data.message;
+
+        await loadShares();
+
+    } catch (error) {
+
+        message.innerText = error.message;
+    }
+}
+
+// Load people who have access
+async function loadShares() {
+
+    const list = document.getElementById("shareList");
+    const message = document.getElementById("shareListMessage");
+
+    if (!selectedDocumentId) return;
+
+    list.innerHTML =
+        '<tr><td colspan="4">Loading...</td></tr>';
+
+    message.innerText = "Loading sharing details...";
+
+    try {
+
+        const response = await fetch(
+            "/api/documents/" + selectedDocumentId + "/shares"
+        );
+
+        if (response.status === 401) {
+            window.location.href = "/login1.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Could not load sharing details.");
+        }
+
+        list.innerHTML = "";
+
+        if (!data.shares || data.shares.length === 0) {
+
+            list.innerHTML =
+                '<tr><td colspan="4">This document is not shared with anyone.</td></tr>';
+
+            message.innerText = "Total people with access: 0";
+
+            return;
+        }
+
+        data.shares.forEach(function(share) {
+
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = share.name;
+
+            const emailCell = document.createElement("td");
+            emailCell.textContent = share.email;
+
+            const permissionCell = document.createElement("td");
+            permissionCell.textContent = share.permission;
+
+            const actionCell = document.createElement("td");
+
+            const revokeButton = document.createElement("button");
+
+            revokeButton.textContent = "Revoke Access";
+            revokeButton.className = "revoke";
+
+            revokeButton.addEventListener("click", function() {
+                revokeAccess(share.user_id, share.email);
+            });
+
+            actionCell.appendChild(revokeButton);
+
+            row.appendChild(nameCell);
+            row.appendChild(emailCell);
+            row.appendChild(permissionCell);
+            row.appendChild(actionCell);
+
+            list.appendChild(row);
+        });
+
+        message.innerText =
+            "Total people with access: " + data.shares.length;
+
+    } catch (error) {
+
+        message.innerText = error.message;
+
+        list.innerHTML =
+            '<tr><td colspan="4">Could not load sharing details.</td></tr>';
+    }
+}
+
+// Revoke access
+async function revokeAccess(userId, email) {
+
+    if (!selectedDocumentId) return;
+
+    const confirmed = confirm(
+        "Are you sure you want to remove access for " + email + "?"
+    );
+
+    if (!confirmed) return;
+
+    const message = document.getElementById("shareListMessage");
+
+    message.innerText = "Revoking access...";
+
+    try {
+
+        const response = await fetch(
+            "/api/documents/" + selectedDocumentId +
+            "/share/" + userId,
+            {
+                method: "DELETE"
+            }
+        );
+
+        if (response.status === 401) {
+            window.location.href = "/login1.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Could not revoke access.");
+        }
+
+        message.innerText = data.message || "Access revoked successfully.";
+
+        await loadShares();
+
+    } catch (error) {
+
+        message.innerText = error.message;
+    }
+}
+
+loadDocuments();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TrustVault</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 35px;
+            width: 360px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px #0002;
+        }
+
+        h2 {
+            color: #10234b;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+            color: #64748b;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login {
+            margin-top: 20px;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        #message {
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Create Account</h2>
+
+    <p>Join TrustVault today</p>
+
+    <form id="registerForm">
+
+        <input type="text"
+               id="name"
+               placeholder="Full Name"
+               required>
+
+        <input type="email"
+               id="email"
+               placeholder="Email Address"
+               required>
+
+        <input type="password"
+               id="password"
+               placeholder="Password (minimum 8 characters)"
+               minlength="8"
+               required>
+
+        <button type="submit" id="registerButton">Register</button>
+
+    </form>
+
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <div class="login">
+        <p>Already have an account?
+            <a href="/login1.html">Login</a>
+        </p>
+    </div>
+
+</div>
+
+<script>
+    const registerForm = document.getElementById("registerForm");
+    const message = document.getElementById("message");
+    const registerButton = document.getElementById("registerButton");
+
+    registerForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (password.length < 8) {
+            message.textContent = "Password must contain at least 8 characters.";
+            return;
+        }
+
+        registerButton.disabled = true;
+        registerButton.textContent = "Registering...";
+        message.textContent = "Please wait...";
+
+        try {
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                message.textContent = "Registration successful! Your account has been created.";
+                message.style.color = "green";
+                registerForm.reset();
+            } else {
+                message.textContent = result.message || "Registration failed.";
+                message.style.color = "red";
+            }
+
+        } catch (error) {
+            message.textContent = "Cannot connect to the server. Please try again.";
+            message.style.color = "red";
+        }
+
+        registerButton.disabled = false;
+        registerButton.textContent = "Register";
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+node_modules/
+.env
+trustvault.db
+private_uploads/*
+!private_uploads/.gitkeep

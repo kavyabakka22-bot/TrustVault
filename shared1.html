@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shared Documents - TrustVault</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #172554;
+}
+header {
+    background: #10234b;
+    color: white;
+    padding: 18px 30px;
+}
+header a {
+    color: white;
+    text-decoration: none;
+    margin-right: 18px;
+}
+main {
+    max-width: 1000px;
+    margin: 35px auto;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #0001;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+th {
+    background: #e2e8f0;
+}
+.download {
+    display: inline-block;
+    background: #1d4ed8;
+    color: white;
+    padding: 9px 13px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+#message {
+    margin-top: 18px;
+}
+@media(max-width: 650px) {
+    table { font-size: 12px; }
+    th, td { padding: 8px 5px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🔐 TrustVault</h2>
+    <nav>
+        <a href="/dashboard1.html">Dashboard</a>
+        <a href="/documents1.html">My Documents</a>
+        <a href="/shared1.html">Shared Documents</a>
+        <a href="/activites.html">Activities</a>
+    </nav>
+</header>
+
+<main>
+    <div class="container">
+        <h1>Shared Documents</h1>
+        <p>Documents shared with your account by other users.</p>
+
+        <p id="message">Loading shared documents...</p>
+
+        <table id="documentsTable" hidden>
+            <thead>
+                <tr>
+                    <th>Document Name</th>
+                    <th>Owner</th>
+                    <th>Permission</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="documentsBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+async function loadSharedDocuments() {
+    const message = document.getElementById("message");
+    const table = document.getElementById("documentsTable");
+    const body = document.getElementById("documentsBody");
+
+    try {
+        const response = await fetch("/api/shared-documents");
+
+        if (response.status === 401) {
+            window.location.href = "/login1.html";
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            message.textContent = result.message || "Unable to load documents.";
+            return;
+        }
+
+        body.replaceChildren();
+
+        if (result.documents.length === 0) {
+            message.textContent = "No documents have been shared with you yet.";
+            return;
+        }
+
+        result.documents.forEach(doc => {
+            const row = document.createElement("tr");
+
+            const name = document.createElement("td");
+            name.textContent = doc.original_name;
+
+            const owner = document.createElement("td");
+            owner.textContent = doc.owner_name || doc.owner_email;
+
+            const permission = document.createElement("td");
+            permission.textContent = doc.permission;
+
+            const action = document.createElement("td");
+            const download = document.createElement("a");
+            download.className = "download";
+            download.textContent = "Download";
+            download.href = "/api/documents/" + encodeURIComponent(doc.id) + "/download";
+
+            action.appendChild(download);
+
+            row.append(name, owner, permission, action);
+            body.appendChild(row);
+        });
+
+        message.textContent = "Total shared documents: " + result.documents.length;
+        table.hidden = false;
+
+    } catch (error) {
+        message.textContent = "Could not connect to the TrustVault server.";
+    }
+}
+
+loadSharedDocuments();
+</script>
+
+</body>
+</html>

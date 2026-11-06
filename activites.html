@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activities - TrustVault</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #172554;
+}
+
+header {
+    background: #10234b;
+    color: white;
+    padding: 22px 35px;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    padding: 35px;
+}
+
+.container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.activity {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.activity h3 {
+    margin-bottom: 5px;
+}
+
+.activity p {
+    color: #64748b;
+}
+
+.status {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+#message {
+    color: #64748b;
+}
+
+@media(max-width: 600px) {
+    main {
+        padding: 15px;
+    }
+
+    header {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🔐 TrustVault - Activities</h2>
+    <a href="/dashboard1.html">← Back to Dashboard</a>
+</header>
+
+<main>
+<div class="container">
+
+    <h2>Recent Activities</h2>
+    <p>Track your document-related activities.</p>
+
+    <p id="message">Loading activities...</p>
+
+    <div id="activityList"></div>
+
+</div>
+</main>
+
+<script>
+
+async function loadActivities() {
+
+    const message = document.getElementById("message");
+    const activityList = document.getElementById("activityList");
+
+    try {
+
+        const response = await fetch("/api/activities");
+
+        if (response.status === 401) {
+            window.location.href = "/login1.html";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Could not load activities.");
+        }
+
+        activityList.innerHTML = "";
+
+        if (!data.activities || data.activities.length === 0) {
+            message.innerText = "No activities recorded yet.";
+            return;
+        }
+
+        message.innerText = "Total activities: " + data.activities.length;
+
+        data.activities.forEach(function(activity) {
+
+            const box = document.createElement("div");
+            box.className = "activity";
+
+            const heading = document.createElement("h3");
+            heading.textContent = "📁 " + activity.action;
+
+            const details = document.createElement("p");
+            details.textContent = activity.details || "No additional details.";
+
+            const date = document.createElement("p");
+            date.textContent = "Date: " +
+                new Date(activity.created_at + " UTC").toLocaleString();
+
+            const status = document.createElement("span");
+            status.className = "status";
+            status.textContent = "Activity recorded";
+
+            box.appendChild(heading);
+            box.appendChild(details);
+            box.appendChild(date);
+            box.appendChild(status);
+
+            activityList.appendChild(box);
+
+        });
+
+    } catch (error) {
+
+        console.error("Activity loading error:", error);
+        message.innerText = error.message;
+
+    }
+}
+
+loadActivities();
+
+</script>
+
+</body>
+</html>
