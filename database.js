@@ -1,9 +1,13 @@
 
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const fs = require("fs");
 
-const dbPath = path.join(__dirname, "trustvault.db");
+const dataDirectory = process.env.DATA_DIR || __dirname;
 
+fs.mkdirSync(dataDirectory, { recursive: true });
+
+const dbPath = path.join(dataDirectory, "trustvault.db");
 const db = new sqlite3.Database(dbPath, (error) => {
     if (error) {
         console.error("Database connection failed:", error.message);

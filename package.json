@@ -7,12 +7,17 @@
     "start": "node server.js",
     "test": "node --test"
   },
-  "keywords": ["trustvault", "document-sharing", "nodejs"],
+  "keywords": [
+    "trustvault",
+    "document-sharing",
+    "nodejs"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "connect-sqlite3": "^0.9.18",
     "express": "^5.3.0",
     "express-session": "^1.19.0",
     "helmet": "^8.3.0",

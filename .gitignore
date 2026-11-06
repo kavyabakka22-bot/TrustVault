@@ -3,3 +3,5 @@ node_modules/
 trustvault.db
 private_uploads/*
 !private_uploads/.gitkeep
+sessions.db
+sessions.db-*

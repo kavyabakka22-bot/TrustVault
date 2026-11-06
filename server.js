@@ -1,6 +1,8 @@
+
 const express = require("express");
 const helmet = require("helmet");
 const session = require("express-session");
+const SQLiteStore = require("connect-sqlite3")(session);
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const path = require("path");
@@ -10,12 +12,26 @@ const crypto = require("crypto");
 const db = require("./database");
 
 const app = express();
+app.set("trust proxy", 1);
+
 const PORT = process.env.PORT || 3000;
 
-const uploadDirectory = path.join(__dirname, "private_uploads");
+const dataDirectory = process.env.DATA_DIR || __dirname;
 
-if (!fs.existsSync(uploadDirectory)) {
-    fs.mkdirSync(uploadDirectory, { recursive: true });
+fs.mkdirSync(dataDirectory, { recursive: true });
+
+const uploadDirectory = path.join(
+    dataDirectory,
+    "private_uploads"
+);
+
+fs.mkdirSync(uploadDirectory, { recursive: true });
+
+if (
+    process.env.NODE_ENV === "production" &&
+    !process.env.SESSION_SECRET
+) {
+    throw new Error("SESSION_SECRET must be configured in production.");
 }
 
 app.use(helmet({
@@ -26,6 +42,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
+    store: new SQLiteStore({
+        db: "sessions.db",
+        dir: dataDirectory
+    }),
     secret: process.env.SESSION_SECRET ||
         "trustvault-development-secret-change-before-deployment",
     resave: false,
@@ -33,7 +53,7 @@ app.use(session({
     cookie: {
         httpOnly: true,
         sameSite: "lax",
-        secure: false,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
@@ -576,7 +596,7 @@ app.post("/api/documents/:id/share", requireLogin, (req, res) => {
     );
 });
 
-// NEW: LIST USERS WHO HAVE ACCESS TO AN OWNED DOCUMENT
+// LIST USERS WHO HAVE ACCESS TO AN OWNED DOCUMENT
 app.get("/api/documents/:id/shares", requireLogin, (req, res) => {
     const documentId = getDocumentId(req, res);
     if (!documentId) return;
@@ -906,5 +926,5 @@ app.use((error, req, res, next) => {
 
 // START SERVER
 app.listen(PORT, () => {
-    console.log(`TrustVault server running at http://localhost:${PORT}`);
+    console.log(`TrustVault server running on port ${PORT}`);
 });
