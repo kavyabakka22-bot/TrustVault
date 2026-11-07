@@ -1,10 +1,27 @@
-# TrustVault – AI Usage Log
+# PROMPTS.md
 
-This document records how AI assistance was used during the development of TrustVault. The prompts below are reconstructed summaries of the development discussions and are not claimed to be exact verbatim chat transcripts.
+# TrustVault — AI-Assisted Development Record
 
-## 1. Project Setup and Backend Development
+**Project:** TrustVault — Secure Document Sharing with a Real Audit Trail  
+**Challenge:** Snovasys Fresher Hiring Challenge 2026 — RISE  
+**Technology:** Node.js, Express.js, SQLite, HTML, CSS, JavaScript  
+**AI Tool:** ChatGPT
 
-**Date:** 2026-11-06
+## Important Note
+
+This document records how AI assistance was used during the development of TrustVault.
+
+It was prepared retrospectively on November 7, 2026, using my development discussions, project notes, implementation work, and GitHub history.
+
+The prompts below are reconstructed summaries of the development discussions and are not claimed to be exact verbatim chat transcripts.
+
+AI was used as a development assistant for understanding requirements, generating suggestions, troubleshooting errors, and improving the application. I reviewed the suggestions, integrated the required changes, and tested the application.
+
+---
+
+## Entry 1 — Project Setup and Backend Development
+
+**Date:** November 6, 2026
 
 **Prompt given to AI:**
 
@@ -12,25 +29,25 @@ Help me create a secure document-sharing web application called TrustVault. Guid
 
 **AI output:**
 
-AI suggested a Node.js and Express backend, SQLite database, user authentication, document uploads, and a frontend for managing documents.
+AI suggested a Node.js and Express.js backend, SQLite database, user authentication, document uploads, and a frontend for managing documents.
 
-**What was wrong with the AI output:**
+**What needed improvement:**
 
 The initial suggestions needed to be checked against the actual project requirements. The application also needed proper testing and configuration before deployment.
 
-**What I did instead:**
+**What I did:**
 
-I created the TrustVault project, configured the backend and database, developed the frontend pages, and tested the application features.
+I created the TrustVault project, configured the backend and database, developed the frontend pages, and worked on implementing and testing the application features.
 
-**GitHub commit:**
+**GitHub evidence:**
 
-https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84
+[Initial TrustVault project](https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84)
 
 ---
 
-## 2. Authentication and Access Control
+## Entry 2 — Authentication and Access Control
 
-**Date:** 2026-11-06
+**Date:** November 6, 2026
 
 **Prompt given to AI:**
 
@@ -40,23 +57,23 @@ Help me improve TrustVault authentication and session security. Ensure that user
 
 AI suggested password hashing, session-based authentication, protected routes, secure cookie settings, and environment-based session secrets.
 
-**What was wrong with the AI output:**
+**What needed improvement:**
 
 Security suggestions needed to be checked against the actual application configuration. Session security and access protection also needed testing.
 
-**What I did instead:**
+**What I did:**
 
 I improved the authentication and session configuration, checked that protected APIs required login, and tested access using separate user accounts.
 
-**GitHub commit:**
+**GitHub evidence:**
 
-https://github.com/kavyabakka22-bot/TrustVault/commit/c1cf56f6a68271a8ce5db20d2b5908638054e2f9
+[Improve session security and persistent storage](https://github.com/kavyabakka22-bot/TrustVault/commit/c1cf56f6a68271a8ce5db20d2b5908638054e2f9)
 
 ---
 
-## 3. Document Sharing and Authorization
+## Entry 3 — Document Sharing and Authorization
 
-**Date:** 2026-11-06
+**Date:** November 6, 2026
 
 **Prompt given to AI:**
 
@@ -66,23 +83,23 @@ Help me implement secure document sharing so that a logged-in user can share a d
 
 AI suggested implementing document sharing, permission checks, recipient access, and the ability to revoke access.
 
-**What was wrong with the AI output:**
+**What needed improvement:**
 
 The suggested implementation needed to be checked to ensure that users could not access documents belonging to other users without permission.
 
-**What I did instead:**
+**What I did:**
 
-I reviewed and tested document ownership and sharing access. I verified that the recipient could access a shared document and that access was denied after revocation.
+I reviewed and tested document ownership and sharing access. I checked whether an authorized recipient could access a shared document and whether access was denied after revocation.
 
-**GitHub commit:**
+**GitHub evidence:**
 
-https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84
+[TrustVault source repository](https://github.com/kavyabakka22-bot/TrustVault)
 
 ---
 
-## 4. Automated Security Testing
+## Entry 4 — Automated Security Testing
 
-**Date:** 2026-11-07
+**Date:** November 7, 2026
 
 **Prompt given to AI:**
 
@@ -92,23 +109,27 @@ Help me write automated tests to verify that the TrustVault backend runs correct
 
 AI suggested backend tests for server availability and authentication protection for document, shared document, and activity APIs.
 
-**What was wrong with the AI output:**
+**What needed improvement:**
 
 The initial tests needed to be executed locally to confirm that they passed. Some tests initially failed when the backend server was not running.
 
-**What I did instead:**
+**What I did:**
 
-I started the backend server in a separate Command Prompt window and ran `npm test`. All four tests passed.
+I started the backend server in a separate Command Prompt window and ran the following command:
 
-**GitHub commit:**
+`npm test`
 
-https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84
+All four tests passed in my local testing environment.
+
+**GitHub evidence:**
+
+[TrustVault source repository and test files](https://github.com/kavyabakka22-bot/TrustVault)
 
 ---
 
-## 5. Deployment and Storage Troubleshooting
+## Entry 5 — Deployment and Storage Troubleshooting
 
-**Date:** 2026-11-07
+**Date:** November 7, 2026
 
 **Prompt given to AI:**
 
@@ -116,16 +137,55 @@ Help me troubleshoot TrustVault deployment on Render and resolve dependency inst
 
 **AI output:**
 
-AI suggested checking the deployment logs, package dependencies, build configuration, and storage limitations.
+AI suggested checking deployment logs, package dependencies, build configuration, and storage limitations.
 
-**What was wrong with the AI output:**
+**What needed improvement:**
 
-The deployment configuration needed to match the actual dependencies and the hosting environment. The free hosting environment also has limitations on persistent file storage.
+The deployment configuration needed to match the actual dependencies and hosting environment. The free hosting environment also has limitations on persistent file storage.
 
-**What I did instead:**
+**What I did:**
 
-I updated the dependency configuration, added the required `picomatch` dependency, checked the package installation, and verified the deployment. I also documented the temporary-storage limitation.
+I updated the dependency configuration, added the required `picomatch` dependency, checked package installation, and verified the deployed application. I also documented the temporary-storage limitation.
 
-**GitHub commit:**
+**GitHub evidence:**
 
-https://github.com/kavyabakka22-bot/TrustVault/commit/25255d5e7edbf4faeis log documents the prompts, implementation decisions, testing, corrections, and remaining limitations honestly.
+[TrustVault GitHub commit history — Add picomatch dependency for deployment](https://github.com/kavyabakka22-bot/TrustVault/commits/main/)
+
+---
+
+## What I Learned
+
+1. AI-generated code must be reviewed and tested before implementation.
+2. Authentication and authorization are different security concepts.
+3. Server-side permission checks are important for secure document sharing.
+4. SHA-256 helps verify file integrity by detecting changes in file contents.
+5. Audit logs help track important application activities.
+6. Debugging errors improved my understanding of backend development.
+7. Automated testing helps identify problems before deployment.
+8. Deployment helped me understand how a web application works online.
+9. Secure session configuration and access control are important for protecting user information.
+
+---
+
+## My Responsibility
+
+I used ChatGPT as an AI development assistant for understanding requirements, generating guidance, and troubleshooting errors.
+
+I reviewed the suggestions, integrated the required code into my project, tested the application, and worked on correcting problems.
+
+The implementation, integration, testing, and project development involved my own effort and decisions. AI assistance supported my learning and development process.
+
+This project helped me gain practical experience with Node.js, Express.js, SQLite, authentication, authorization, document sharing, automated testing, security, and deployment.
+
+---
+
+## Project Links
+
+**Live Application:**  
+https://trustvault-198a.onrender.com
+
+**GitHub Repository:**  
+https://github.com/kavyabakka22-bot/TrustVault
+
+**Challenge:**  
+Snovasys Fresher Hiring Challenge 2026 — RISE
