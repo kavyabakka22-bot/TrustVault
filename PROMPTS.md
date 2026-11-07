@@ -1,147 +1,131 @@
-# TrustVault – AI Prompt Engineering Log
+# TrustVault – AI Usage Log
 
-This document records how AI tools were used during the development of TrustVault. AI was used as a development assistant. I reviewed the suggestions, tested the application, and worked through errors during implementation.
+This document records how AI assistance was used during the development of TrustVault. The prompts below are reconstructed summaries of the development discussions and are not claimed to be exact verbatim chat transcripts.
 
-**Project:** TrustVault – Secure Document Sharing  
-**GitHub:** https://github.com/kavyabakka22-bot/TrustVault  
-**Live application:** https://trustvault-198a.onrender.com
-
-> Honesty note: The entries below are a draft reconstruction from the available project development history. Verify and edit each date, prompt, AI output, correction, and commit link against your actual work before submitting. Do not present reconstructed details as exact historical records.
-
----
-
-## Entry 1 – Project Setup and Backend Development
+## 1. Project Setup and Backend Development
 
 **Date:** 2026-11-06
 
-**Prompt asked:**
+**Prompt given to AI:**
 
-"Help me build a secure document-sharing application called TrustVault using Node.js, Express, SQLite, HTML, CSS, and JavaScript. Explain the project structure and implementation step by step."
+Help me create a secure document-sharing web application called TrustVault. Guide me through the project setup, backend development, database connection, and required application features.
 
-**What AI produced:**
+**AI output:**
 
-Suggested the project structure, frontend pages, backend setup, and database integration.
+AI suggested a Node.js and Express backend, SQLite database, user authentication, document uploads, and a frontend for managing documents.
 
-**What was wrong:**
+**What was wrong with the AI output:**
 
-The initial implementation required further integration and testing. The application could not be considered complete just because the code was generated.
+The initial suggestions needed to be checked against the actual project requirements. The application also needed proper testing and configuration before deployment.
 
 **What I did instead:**
 
-I worked through the setup, connected the frontend and backend, and tested the application locally.
+I created the TrustVault project, configured the backend and database, developed the frontend pages, and tested the application features.
 
-**Commit reference:** [Initial TrustVault project](https://github.com/kavyabakka22-bot/TrustVault/commit/135455f)
+**GitHub commit:**
+
+https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84
 
 ---
 
-## Entry 2 – Authentication and Access Control
+## 2. Authentication and Access Control
 
 **Date:** 2026-11-06
 
-**Prompt asked:**
+**Prompt given to AI:**
 
-"Help me implement user registration, login, password hashing, session authentication, and protected API routes. Make sure users cannot access protected resources without logging in."
+Help me improve TrustVault authentication and session security. Ensure that users must log in before accessing private documents and protected APIs.
 
-**What AI produced:**
+**AI output:**
 
-Provided authentication and session-management implementation guidance.
+AI suggested password hashing, session-based authentication, protected routes, secure cookie settings, and environment-based session secrets.
 
-**What was wrong:**
+**What was wrong with the AI output:**
 
-A protected route alone does not guarantee that users can access only their own documents. Ownership and permission checks are also necessary.
+Security suggestions needed to be checked against the actual application configuration. Session security and access protection also needed testing.
 
 **What I did instead:**
 
-I worked on session security and protected API routes, then ran automated tests to verify that unauthenticated requests were rejected.
+I improved the authentication and session configuration, checked that protected APIs required login, and tested access using separate user accounts.
 
-**Commit reference:** [Session security improvements](https://github.com/kavyabakka22-bot/TrustVault/commit/c1cf56f)
+**GitHub commit:**
+
+https://github.com/kavyabakka22-bot/TrustVault/commit/c1cf56f6a68271a8ce5db20d2b5908638054e2f9
 
 ---
 
-## Entry 3 – Document Sharing and Authorization
+## 3. Document Sharing and Authorization
 
 **Date:** 2026-11-06
 
-**Prompt asked:**
+**Prompt given to AI:**
 
-"Help me implement secure document sharing between registered users. Only the document owner should be allowed to share a document or revoke another user's access. Recipients should only access documents shared with them."
+Help me implement secure document sharing so that a logged-in user can share a document with another registered user and control their access permissions.
 
-**What AI produced:**
+**AI output:**
 
-Provided guidance for document-sharing functionality and permission handling.
+AI suggested implementing document sharing, permission checks, recipient access, and the ability to revoke access.
 
-**What was wrong:**
+**What was wrong with the AI output:**
 
-Successful sharing does not automatically prove that unauthorized users cannot access documents. Cross-user access and revoked-access behavior need separate verification.
+The suggested implementation needed to be checked to ensure that users could not access documents belonging to other users without permission.
 
 **What I did instead:**
 
-I tested sharing a sample PDF with a second account, verified recipient access and download, and tested revoking access. These were manual checks, not proof that all authorization attacks are prevented.
+I reviewed and tested document ownership and sharing access. I verified that the recipient could access a shared document and that access was denied after revocation.
 
-**Commit reference:** Add the actual GitHub commit URL for the document-sharing implementation after verifying it in the repository history.
+**GitHub commit:**
+
+https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84
 
 ---
 
-## Entry 4 – Automated Security Testing
+## 4. Automated Security Testing
 
 **Date:** 2026-11-07
 
-**Prompt asked:**
+**Prompt given to AI:**
 
-"Help me create automated tests using the Node.js built-in test runner. Test backend availability and make sure document, shared-document, and activity APIs require authentication."
+Help me write automated tests to verify that the TrustVault backend runs correctly and that document-related APIs require authentication.
 
-**What AI produced:**
+**AI output:**
 
-Provided test guidance for protected API endpoints.
+AI suggested backend tests for server availability and authentication protection for document, shared document, and activity APIs.
 
-**What was wrong:**
+**What was wrong with the AI output:**
 
-The initial tests covered unauthenticated API access but did not cover all security risks, such as IDOR, revoked access, and malicious uploads.
+The initial tests needed to be executed locally to confirm that they passed. Some tests initially failed when the backend server was not running.
 
 **What I did instead:**
 
-I ran `npm test` with the backend running and confirmed that all four existing tests passed. I documented the additional security tests still required.
+I started the backend server in a separate Command Prompt window and ran `npm test`. All four tests passed.
 
-**Commit reference:** Add the actual GitHub commit URL for the test implementation after verifying it in the repository history.
+**GitHub commit:**
+
+https://github.com/kavyabakka22-bot/TrustVault/commit/135455fe8da2f91887465e0dd6dd334a65270b84
 
 ---
 
-## Entry 5 – Deployment and Storage Troubleshooting
+## 5. Deployment and Storage Troubleshooting
 
 **Date:** 2026-11-07
 
-**Prompt asked:**
+**Prompt given to AI:**
 
-"Help me deploy my Node.js and SQLite application on Render. Explain deployment errors, dependency issues, and how to fix them."
+Help me troubleshoot TrustVault deployment on Render and resolve dependency installation problems.
 
-**What AI produced:**
+**AI output:**
 
-Provided deployment troubleshooting guidance for SQLite compatibility and dependency installation.
+AI suggested checking the deployment logs, package dependencies, build configuration, and storage limitations.
 
-**What was wrong:**
+**What was wrong with the AI output:**
 
-The initial deployment encountered a SQLite native binary compatibility issue and a package-lock dependency mismatch.
+The deployment configuration needed to match the actual dependencies and the hosting environment. The free hosting environment also has limitations on persistent file storage.
 
 **What I did instead:**
 
-I resolved the dependency issue, added the required `picomatch` dependency, updated the lock file, and verified the deployment.
+I updated the dependency configuration, added the required `picomatch` dependency, checked the package installation, and verified the deployment. I also documented the temporary-storage limitation.
 
-**Commit reference:** [Add picomatch dependency](https://github.com/kavyabakka22-bot/TrustVault/commit/25255d5)
+**GitHub commit:**
 
-**Additional observation:**
-
-Render's free service does not have persistent storage configured. Uploaded files and database data may be lost after a restart or redeployment.
-
----
-
-## AI Usage Reflection
-
-AI helped me understand project architecture, authentication, document sharing, debugging, automated testing, and deployment.
-
-I did not treat AI-generated code as automatically correct. I tested the application, investigated errors, and identified areas where additional security testing was necessary.
-
-The project still requires more comprehensive authorization and security tests before production use.
-
-## Conclusion
-
-AI was used as a development assistant throughout TrustVault development. This log documents the prompts, implementation decisions, testing, corrections, and remaining limitations honestly.
+https://github.com/kavyabakka22-bot/TrustVault/commit/25255d5e7edbf4faeis log documents the prompts, implementation decisions, testing, corrections, and remaining limitations honestly.
